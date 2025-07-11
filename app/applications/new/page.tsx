@@ -10,9 +10,11 @@ import { toast } from "sonner";
 export default function NewApplicationPage() {
   const router = useRouter();
 
+  const BASE_URL = "https://jobs-tracker-backend.vercel.app/api/applications";
+
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
-      const res = await fetch("http://localhost:5001/api/applications", {
+      const res = await fetch(`${BASE_URL}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

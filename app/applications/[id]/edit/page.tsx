@@ -16,11 +16,13 @@ export default function EditApplicationPage() {
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const BASE_URL = "https://jobs-tracker-backend.vercel.app/api/applications";
+
   // Fetch application by ID
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:5001/api/applications/${id}`);
+        const res = await fetch(`${BASE_URL}/${id}`);
         if (!res.ok) throw new Error("Application not found");
         const data = await res.json();
         setApplication(data);
@@ -38,7 +40,7 @@ export default function EditApplicationPage() {
 
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
-      const res = await fetch(`http://localhost:5001/api/applications/${id}`, {
+      const res = await fetch(`${BASE_URL}/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
