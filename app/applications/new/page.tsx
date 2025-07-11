@@ -20,6 +20,7 @@ export default function NewApplicationPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        cache: "no-store",
       });
 
       if (!res.ok) throw new Error("Failed to create application");
