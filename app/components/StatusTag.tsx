@@ -4,7 +4,7 @@ import { FC } from "react";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import type { VariantProps } from "class-variance-authority";
 
-type Status = "Applied" | "Interviewing" | "Rejected" | "Offer";
+type Status = "Applied" | "Interviewing" | "Rejected" | "Offer" | "Accepted";
 
 interface Props {
   status: Status;
@@ -18,6 +18,7 @@ const statusVariantMap: Record<
   Interviewing: "info",
   Rejected: "destructive",
   Offer: "success",
+  Accepted: "default"
 };
 
 export const StatusTag: FC<Props> = ({ status }) => {
