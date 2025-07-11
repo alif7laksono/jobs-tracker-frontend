@@ -5,7 +5,7 @@ export type Application = {
   jobTitle: string;
   company: string;
   location?: string;
-  jobType: "Full-time" | "Internship" | "Contract";
+  jobType: "Full-time" | "Internship" | "Contract" | "Part-time" | "Freelance";
   status: "Applied" | "Interviewing" | "Rejected" | "Offer";
   applicationDate: string;
   jobLink?: string;
