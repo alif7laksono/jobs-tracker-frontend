@@ -27,8 +27,9 @@ const Header: FC = () => {
 
   return (
     <CardHeader>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+      <div className="flex flex-wrap gap-4 items-center justify-between">
+        {/* Title Section */}
+        <div className="flex-1 min-w-[200px]">
           <CardTitle className="text-2xl uppercase font-bold">
             Job Applications
           </CardTitle>
@@ -37,10 +38,11 @@ const Header: FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Actions Section */}
+        <div className="flex flex-wrap items-center gap-2 justify-end">
           <Button
             onClick={() => router.push("/applications/new")}
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto"
           >
             <Plus className="h-4 w-4" />
             Add New

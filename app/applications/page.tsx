@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import Filters from "./components/Filters";
 import ApplicationList from "./components/ApplicationsList";
 import CountdownToast from "./components/CountdownToast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ApplicationsPage() {
   const router = useRouter();
@@ -86,8 +87,24 @@ export default function ApplicationsPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-10">
-        <p className="text-muted-foreground">Loading applications...</p>
+      <div className="max-w-6xl mx-auto pt-0 md:py-4 px-0 sm:px-6 lg:px-8">
+        <div className="grid gap-4">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="border rounded-lg p-4 space-y-4 shadow-sm"
+            >
+              <Skeleton className="h-5 w-1/3" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-1/2" />
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-20 rounded-md" />
+                <Skeleton className="h-8 w-20 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
