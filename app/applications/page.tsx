@@ -18,6 +18,15 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Search, Plus } from "lucide-react";
 import { fetchApplications, deleteApplication } from "@/app/lib/api";
+import { useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { signOut } from "next-auth/react";
 
 export default function ApplicationsPage() {
   const router = useRouter();
@@ -26,10 +35,11 @@ export default function ApplicationsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
 
-  // ✅ Ganti dengan email milikmu (atau input manual nanti)
-  const userEmail = "alif7laksono@gmail.com";
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
 
   useEffect(() => {
+    if (!userEmail) return;
     const loadData = async () => {
       try {
         const data = await fetchApplications(userEmail);
@@ -43,7 +53,7 @@ export default function ApplicationsPage() {
     };
 
     loadData();
-  }, []);
+  }, [userEmail]);
 
   const handleEdit = (id: string) => {
     router.push(`/applications/${id}/edit`);
@@ -100,13 +110,39 @@ export default function ApplicationsPage() {
               </p>
             </div>
 
-            <Button
-              onClick={() => router.push("/applications/new")}
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Add New
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => router.push("/applications/new")}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+
+              {session?.user && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="h-9 w-9 cursor-pointer">
+                      <AvatarImage
+                        src={session.user.image || ""}
+                        alt="User avatar"
+                      />
+                      <AvatarFallback>
+                        {session.user.name?.[0] || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem disabled>
+                      {session.user.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => signOut()}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </CardHeader>
 

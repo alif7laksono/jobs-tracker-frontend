@@ -15,6 +15,8 @@ export async function fetchApplications(userEmail: string) {
     );
   }
 
+  console.log("Fetching from:", `${BASE_URL}?userEmail=${userEmail}`);
+
   return res.json();
 }
 
