@@ -1,41 +1,40 @@
-// frontend/app/aplications/new/page.tsx
-
+// frontend/app/applications/new/page.tsx
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 import Form from "@/app/components/Form";
+import { createApplication } from "@/app/lib/api";
 import { toast } from "sonner";
+import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 
 export default function NewApplicationPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  const BASE_URL = "https://jobs-tracker-backend.vercel.app/api/applications";
+  if (status === "loading") return <div>Loading...</div>;
+  if (!session) {
+    router.push("/login");
+    return null;
+  }
 
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
-      const res = await fetch(`${BASE_URL}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        cache: "no-store",
-      });
-
-      if (!res.ok) throw new Error("Failed to create application");
-
-      toast("Application added successfully!");
+      await createApplication(data, session.user.email!);
+      toast.success("Application created!");
       router.push("/applications");
-    } catch (error) {
-      toast("Failed to add application.");
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to create application");
+      } else {
+        toast.error("Failed to create application");
+      }
     }
   };
 
   return (
-    <div className="py-10">
-      <Form onSubmit={handleSubmit} mode="create" />
+    <div className="max-w-2xl mx-auto py-8">
+      <Form onSubmit={handleSubmit} />
     </div>
   );
 }
