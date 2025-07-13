@@ -1,6 +1,7 @@
 // frontend/app/applications/new/page.tsx
 "use client";
 
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Form from "@/app/components/Form";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 
 export default function NewApplicationPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -19,6 +21,9 @@ export default function NewApplicationPage() {
   }
 
   const handleSubmit = async (data: ApplicationFormValues) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       if (!session?.user?.email) {
         throw new Error("User email is missing");

@@ -7,8 +7,15 @@ import { Session } from "next-auth";
 
 export const authConfig: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "database",
+    maxAge: 60 * 60,
+  },
+
   pages: {
     signIn: "/login",
+    signOut: "/login",
+    error: "/login",
   },
   providers: [
     GoogleProvider({
