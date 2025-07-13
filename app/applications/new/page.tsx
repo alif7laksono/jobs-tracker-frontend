@@ -20,7 +20,11 @@ export default function NewApplicationPage() {
 
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
-      await createApplication(data, session.user.email!);
+      if (!session?.user?.email) {
+        throw new Error("User email is missing");
+      }
+
+      await createApplication(data, session.user.email);
       toast.success("Application created!");
       router.push("/applications");
     } catch (error: unknown) {
