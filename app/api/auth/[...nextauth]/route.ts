@@ -1,23 +1,7 @@
-// app/api/auth/[...nextAuth]/route.ts
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth";
+import { authConfig } from "@/app/lib/auth";
 
-import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google";
-
-export const authOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
-  secret: process.env.NEXTAUTH_SECRET,
-  callbacks: {
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      return url.startsWith("/") ? `${baseUrl}${url}` : baseUrl;
-    },
-  },
-};
-
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authConfig);
 
 export { handler as GET, handler as POST };
