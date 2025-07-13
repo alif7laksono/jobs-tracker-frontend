@@ -60,19 +60,23 @@ export default function ApplicationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm(
+    const confirmDelete = toast(
       "Are you sure you want to delete this application?"
     );
     if (!confirmDelete) return;
 
-    try {
-      await deleteApplication(id);
-      setApplications((prev) => prev.filter((app) => app._id !== id));
-      toast("Application deleted!");
-    } catch (error) {
-      toast("Failed to delete application.");
-      console.log(error);
-    }
+    toast("Deleting in 5 seconds...");
+
+    setTimeout(async () => {
+      try {
+        await deleteApplication(id);
+        setApplications((prev) => prev.filter((app) => app._id !== id));
+        toast("Application deleted!");
+      } catch (error) {
+        toast("Failed to delete application.");
+        console.error(error);
+      }
+    }, 5000);
   };
 
   const filteredApplications = applications.filter((app) => {
