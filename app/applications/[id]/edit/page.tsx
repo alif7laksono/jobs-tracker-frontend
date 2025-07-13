@@ -8,6 +8,7 @@ import { Application } from "@/app/types";
 import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 import Form from "@/app/components/Form";
 import { toast } from "sonner";
+import { getApplicationById, updateApplication } from "@/app/lib/api";
 
 export default function EditApplicationPage() {
   const { id } = useParams() as { id: string };
@@ -16,19 +17,17 @@ export default function EditApplicationPage() {
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = "https://jobs-tracker-backend.vercel.app/api/applications";
-
-  // Fetch application by ID
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/${id}`);
-        if (!res.ok) throw new Error("Application not found");
-        const data = await res.json();
+        const data = await getApplicationById(id);
         setApplication(data);
       } catch (error) {
-        toast("Failed to load application data.");
-        console.log(error);
+        if (error instanceof Error) {
+          toast.error(error.message || "Failed to fetch application detail.");
+        } else {
+          toast.error("Failed to fetch application detail.");
+        }
         setApplication(null);
       } finally {
         setLoading(false);
@@ -40,21 +39,12 @@ export default function EditApplicationPage() {
 
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
-      const res = await fetch(`${BASE_URL}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) throw new Error("Update failed");
-
-      toast("Application updated!");
+      await updateApplication(id, data);
+      toast.success("Application updated!");
       router.push("/applications");
     } catch (error) {
-      toast("Failed to update application.");
-      console.log(error);
+      toast.error((error as Error).message || "Failed update application.");
+      setApplication(null);
     }
   };
 

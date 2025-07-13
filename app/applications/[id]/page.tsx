@@ -1,3 +1,5 @@
+// app/applications/[id]/page.tsx
+
 "use client";
 import { useEffect, useState } from "react";
 import { notFound, useParams } from "next/navigation";
@@ -9,25 +11,25 @@ import Link from "next/link";
 import { Calendar, Link2, MapPin, Notebook, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import { Application } from "@/app/types";
+import { getApplicationById } from "@/app/lib/api";
 
 export default function ApplicationDetailPage() {
   const { id } = useParams() as { id: string };
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = "https://jobs-tracker-backend.vercel.app/api/applications";
-
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/${id}`);
-        if (!res.ok) throw new Error("Application not found");
-        const data = await res.json();
+        const data = await getApplicationById(id);
         setApplication(data);
       } catch (error) {
-        toast("Failed to fetch application detail.");
+        if (error instanceof Error) {
+          toast.error(error.message || "Failed to fetch application detail.");
+        } else {
+          toast.error("Failed to fetch application detail.");
+        }
         setApplication(null);
-        console.log(error);
       } finally {
         setLoading(false);
       }

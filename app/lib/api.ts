@@ -16,8 +16,15 @@ export async function fetchApplications(userEmail: string) {
 }
 
 export async function deleteApplication(id: string) {
+  const session = await getSession();
+  if (!session?.accessToken) {
+    throw new Error("No access token available");
+  }
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
   });
   if (!res.ok) {
     throw new Error("Failed to delete application");
@@ -38,15 +45,42 @@ export async function createApplication(
   return res.json();
 }
 
-export async function updateApplication(
-  id: string,
-  data: ApplicationFormValues
-) {
+export async function updateApplication(id: string, data: unknown) {
+  const session = await getSession();
+  if (!session?.accessToken) {
+    throw new Error("No access token available");
+  }
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.accessToken}`,
+    },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to update application");
+  if (!res.ok) {
+    throw new Error("Failed to update application");
+  }
+  return res.json();
+}
+
+export async function getApplicationById(id: string) {
+  const session = await getSession();
+  if (!session?.accessToken) {
+    throw new Error("No access token available");
+  }
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error(
+      res.status === 404
+        ? "Application not found"
+        : "Failed to fetch application"
+    );
+  }
   return res.json();
 }
