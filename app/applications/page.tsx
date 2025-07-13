@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import Header from "./components/Header";
 import Filters from "./components/Filters";
 import ApplicationList from "./components/ApplicationsList";
+import CountdownToast from "./components/CountdownToast";
 
 export default function ApplicationsPage() {
   const router = useRouter();
@@ -43,23 +44,27 @@ export default function ApplicationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = toast(
+    const confirmed = window.confirm(
       "Are you sure you want to delete this application?"
     );
-    if (!confirmDelete) return;
+    if (!confirmed) return;
 
-    toast("Deleting in 5 seconds...");
-
-    setTimeout(async () => {
-      try {
-        await deleteApplication(id);
-        setApplications((prev) => prev.filter((app) => app._id !== id));
-        toast("Application deleted!");
-      } catch (error) {
-        toast("Failed to delete application.");
-        console.error(error);
-      }
-    }, 5000);
+    const toastId = toast.custom((t) => (
+      <CountdownToast
+        onComplete={async () => {
+          toast.dismiss(t); // remove countdown toast
+          try {
+            await deleteApplication(id);
+            setApplications((prev) => prev.filter((app) => app._id !== id));
+            toast.success("Application deleted!");
+          } catch (error) {
+            toast.error("Failed to delete application.");
+            console.error(error);
+            console.log(toastId);
+          }
+        }}
+      />
+    ));
   };
 
   const filteredApplications = applications.filter((app) => {
