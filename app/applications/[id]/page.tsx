@@ -2,7 +2,8 @@
 
 "use client";
 import { useEffect, useState } from "react";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { StatusTag } from "@/app/components/StatusTag";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -15,20 +16,26 @@ import { getApplicationById } from "@/app/lib/api";
 
 export default function ApplicationDetailPage() {
   const { id } = useParams() as { id: string };
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
     const fetchApplication = async () => {
       try {
         const data = await getApplicationById(id);
         setApplication(data);
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || "Failed to fetch application detail.");
-        } else {
-          toast.error("Failed to fetch application detail.");
-        }
+        toast.error(
+          (error as Error).message || "Failed to fetch application detail."
+        );
         setApplication(null);
       } finally {
         setLoading(false);
@@ -36,9 +43,9 @@ export default function ApplicationDetailPage() {
     };
 
     fetchApplication();
-  }, [id]);
+  }, [id, session, status, router]);
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="text-center py-10 text-muted-foreground">
         Loading application...

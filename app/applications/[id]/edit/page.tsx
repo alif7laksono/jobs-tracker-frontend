@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Application } from "@/app/types";
 import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 import Form from "@/app/components/Form";
@@ -13,21 +14,25 @@ import { getApplicationById, updateApplication } from "@/app/lib/api";
 export default function EditApplicationPage() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
-
+  const { data: session, status } = useSession();
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const data = await getApplicationById(id);
         setApplication(data);
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || "Failed to fetch application detail.");
-        } else {
-          toast.error("Failed to fetch application detail.");
-        }
+        toast.error(
+          (error as Error).message || "Failed to load application data."
+        );
         setApplication(null);
       } finally {
         setLoading(false);
@@ -35,7 +40,7 @@ export default function EditApplicationPage() {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, session, status, router]);
 
   const handleSubmit = async (data: ApplicationFormValues) => {
     try {
@@ -43,12 +48,11 @@ export default function EditApplicationPage() {
       toast.success("Application updated!");
       router.push("/applications");
     } catch (error) {
-      toast.error((error as Error).message || "Failed update application.");
-      setApplication(null);
+      toast.error((error as Error).message || "Failed to upload application.");
     }
   };
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="py-10 text-center text-muted-foreground">
         Loading application data...
