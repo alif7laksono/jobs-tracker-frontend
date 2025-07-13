@@ -52,7 +52,7 @@ export default function ApplicationsPage() {
     const toastId = toast.custom((t) => (
       <CountdownToast
         onComplete={async () => {
-          toast.dismiss(t); // remove countdown toast
+          toast.dismiss(t); // hapus toast
           try {
             await deleteApplication(id);
             setApplications((prev) => prev.filter((app) => app._id !== id));
@@ -62,6 +62,10 @@ export default function ApplicationsPage() {
             console.error(error);
             console.log(toastId);
           }
+        }}
+        onCancel={() => {
+          toast.dismiss(t);
+          toast.info("Deletion cancelled");
         }}
       />
     ));
