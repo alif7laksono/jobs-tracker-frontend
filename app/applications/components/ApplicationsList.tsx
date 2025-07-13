@@ -5,6 +5,7 @@ import { Application } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { ApplicationCard } from "@/app/components/ApplicationCard";
+import Link from "next/link";
 
 interface ApplicationListProps {
   applications: Application[];
@@ -21,7 +22,6 @@ const ApplicationList: FC<ApplicationListProps> = ({
   onDelete,
   searchTerm,
   statusFilter,
-  onClearFilters,
 }) => {
   if (applications.length === 0) {
     return (
@@ -32,8 +32,8 @@ const ApplicationList: FC<ApplicationListProps> = ({
             ? "No matching applications found"
             : "No applications yet"}
         </p>
-        <Button variant="outline" onClick={onClearFilters}>
-          Clear filters
+        <Button variant="link">
+          <Link href="/applications/new">Create Application</Link>
         </Button>
       </div>
     );
