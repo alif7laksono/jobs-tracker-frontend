@@ -13,10 +13,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const Header: FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    toast.success("Berhasil logout");
+    router.push("/login");
+  };
 
   return (
     <CardHeader>
@@ -56,7 +63,7 @@ const Header: FC = () => {
                 <DropdownMenuItem disabled>
                   {session.user.email}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>

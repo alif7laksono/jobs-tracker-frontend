@@ -30,8 +30,10 @@ import {
   Briefcase,
   ClipboardList,
   MapPin,
+  XCircle,
   Building2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   defaultValues?: Partial<ApplicationFormValues>;
@@ -58,6 +60,8 @@ export default function Form({
       ...defaultValues,
     },
   });
+
+  const router = useRouter();
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -260,6 +264,20 @@ export default function Form({
             />
 
             <div className="flex justify-end gap-4 pt-4">
+              {/* Cancel button */}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full md:w-auto"
+                onClick={() => router.push("/applications")}
+              >
+                <span className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4" />
+                  Cancel
+                </span>
+              </Button>
+
+              {/* Submit button */}
               <Button
                 type="submit"
                 className="w-full md:w-auto"

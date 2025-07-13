@@ -61,7 +61,7 @@ export default function ApplicationDetailPage() {
         <CardHeader className="pb-4">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-2xl font-bold tracking-tight">
+              <CardTitle className="text-2xl font-bold tracking-tight capitalize">
                 {application.jobTitle}
               </CardTitle>
               <p className="text-lg text-muted-foreground mt-1">
