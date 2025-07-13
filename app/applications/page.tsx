@@ -2,31 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ApplicationCard } from "@/app/components/ApplicationCard";
 import { Application } from "@/app/types";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Search, Plus } from "lucide-react";
 import { fetchApplications, deleteApplication } from "@/app/lib/api";
 import { useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { signOut } from "next-auth/react";
+import Header from "./components/Header";
+import Filters from "./components/Filters";
+import ApplicationList from "./components/ApplicationsList";
 
 export default function ApplicationsPage() {
   const router = useRouter();
@@ -103,139 +86,31 @@ export default function ApplicationsPage() {
   return (
     <div className="max-w-6xl mx-auto pt-0 md:py-4 px-0 sm:px-6 lg:px-8">
       <Card className="border-0 shadow-none">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <CardTitle className="text-2xl uppercase font-bold">
-                Job Applications
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Track all your job applications in one place
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={() => router.push("/applications/new")}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add New
-              </Button>
-
-              {session?.user && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Avatar className="h-9 w-9 cursor-pointer">
-                      <AvatarImage
-                        src={session.user.image || ""}
-                        alt="User avatar"
-                      />
-                      <AvatarFallback>
-                        {session.user.name?.[0] || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem disabled>
-                      {session.user.email}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => signOut()}>
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          </div>
-        </CardHeader>
+        <Header />
 
         <CardContent>
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search jobs or companies..."
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Applied">
-                  Applied ({statusCounts.Applied || 0})
-                </SelectItem>
-                <SelectItem value="Interviewing">
-                  Interviewing ({statusCounts.Interviewing || 0})
-                </SelectItem>
-                <SelectItem value="Offer">
-                  Offer ({statusCounts.Offer || 0})
-                </SelectItem>
-                <SelectItem value="Rejected">
-                  Rejected ({statusCounts.Rejected || 0})
-                </SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
-              <Badge
-                variant={statusFilter === "all" ? "default" : "outline"}
-                onClick={() => setStatusFilter("all")}
-                className="cursor-pointer"
-              >
-                All ({applications.length})
-              </Badge>
-              {Object.entries(statusCounts).map(([status, count]) => (
-                <Badge
-                  key={status}
-                  variant={statusFilter === status ? "default" : "outline"}
-                  onClick={() => setStatusFilter(status)}
-                  className="cursor-pointer whitespace-nowrap"
-                >
-                  {status} ({count})
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <Filters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            statusCounts={statusCounts}
+            totalCount={applications.length}
+          />
 
           {/* Application List */}
-          {filteredApplications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 space-y-4">
-              <Search className="h-12 w-12 text-muted-foreground" />
-              <p className="text-lg font-medium text-muted-foreground">
-                {searchTerm || statusFilter !== "all"
-                  ? "No matching applications found"
-                  : "No applications yet"}
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchTerm("");
-                  setStatusFilter("all");
-                }}
-              >
-                Clear filters
-              </Button>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {filteredApplications.map((application, index) => (
-                <ApplicationCard
-                  key={application._id || `app-${index}`}
-                  application={application}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          )}
+          <ApplicationList
+            applications={filteredApplications}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            onClearFilters={() => {
+              setSearchTerm("");
+              setStatusFilter("all");
+            }}
+          />
         </CardContent>
       </Card>
     </div>
