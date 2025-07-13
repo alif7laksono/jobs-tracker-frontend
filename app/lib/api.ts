@@ -1,4 +1,5 @@
 // app/lib/api.ts
+import { Application } from "../types";
 import { ApplicationFormValues } from "./ZodSchemas";
 
 const BASE_URL =
@@ -40,12 +41,12 @@ export async function createApplication(
 }
 
 export async function deleteApplication(id: string) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
+  const res = await fetch(`/api/applications/${id}/soft-delete`, {
+    method: "PATCH",
   });
 
   if (!res.ok) {
-    throw new Error("Failed to delete application");
+    throw new Error("Failed to move application to trash");
   }
 
   return res.json();
@@ -81,4 +82,39 @@ export async function getApplicationById(id: string) {
   }
 
   return res.json();
+}
+
+export async function fetchDeletedApplications(): Promise<Application[]> {
+  const res = await fetch(
+    "https://jobs-tracker-backend.vercel.app/api/applications/deleted",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // Jika butuh token, tambahkan Authorization: `Bearer ${token}`
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch deleted applications");
+  }
+
+  return res.json();
+}
+
+export async function permanentlyDeleteApplication(id: string): Promise<void> {
+  const res = await fetch(
+    `https://jobs-tracker-backend.vercel.app/api/applications/${id}/permanent`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to permanently delete application");
+  }
 }

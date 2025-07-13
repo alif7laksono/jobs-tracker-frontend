@@ -10,6 +10,7 @@ import { ApplicationFormValues } from "@/app/lib/ZodSchemas";
 import Form from "@/app/components/Form";
 import { toast } from "sonner";
 import { getApplicationById, updateApplication } from "@/app/lib/api";
+import Header from "../../components/Header";
 
 export default function EditApplicationPage() {
   const { id } = useParams() as { id: string };
@@ -73,6 +74,7 @@ export default function EditApplicationPage() {
 
   return (
     <div className="py-10">
+      <Header />
       <Form onSubmit={handleSubmit} defaultValues={application} mode="edit" />
     </div>
   );

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const Header: FC = () => {
   const router = useRouter();
@@ -65,6 +66,9 @@ const Header: FC = () => {
                 <DropdownMenuItem disabled>
                   {session.user.email}
                 </DropdownMenuItem>
+                <Link href="/trash">
+                  <DropdownMenuItem>Trash</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>

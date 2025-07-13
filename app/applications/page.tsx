@@ -45,21 +45,17 @@ export default function ApplicationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this application?"
-    );
-    if (!confirmed) return;
-
     const toastId = toast.custom((t) => (
       <CountdownToast
         onComplete={async () => {
-          toast.dismiss(t); // hapus toast
+          toast.dismiss(t); // hapus toast countdown
+
           try {
-            await deleteApplication(id);
+            await deleteApplication(id); // ← ini harus PATCH ke /api/applications/:id/soft-delete
             setApplications((prev) => prev.filter((app) => app._id !== id));
-            toast.success("Application deleted!");
+            toast.success("Application moved to trash!");
           } catch (error) {
-            toast.error("Failed to delete application.");
+            toast.error("Failed to move to trash.");
             console.error(error);
             console.log(toastId);
           }

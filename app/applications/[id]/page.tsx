@@ -13,6 +13,7 @@ import { Calendar, Link2, MapPin, Notebook, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import { Application } from "@/app/types";
 import { getApplicationById } from "@/app/lib/api";
+import Header from "../components/Header";
 
 export default function ApplicationDetailPage() {
   const { id } = useParams() as { id: string };
@@ -57,6 +58,7 @@ export default function ApplicationDetailPage() {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      <Header />
       <Card>
         <CardHeader className="pb-4">
           <div className="flex justify-between items-start">

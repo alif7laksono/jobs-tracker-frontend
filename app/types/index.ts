@@ -10,4 +10,5 @@ export type Application = {
   applicationDate: string;
   jobLink?: string;
   notes?: string;
+  deletedAt?: string;
 };
