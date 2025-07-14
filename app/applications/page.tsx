@@ -50,16 +50,14 @@ export default function ApplicationsPage() {
     const toastId = toast.custom((t) => (
       <CountdownToast
         onComplete={async () => {
-          toast.dismiss(t); // hapus toast countdown
-
+          toast.dismiss(t);
           try {
-            await deleteApplication(id); // ← ini harus PATCH ke /api/applications/:id/soft-delete
+            await deleteApplication(id);
             setApplications((prev) => prev.filter((app) => app._id !== id));
             toast.success("Application moved to trash!");
           } catch (error) {
             toast.error("Failed to move to trash.");
-            console.error(error);
-            console.log(toastId);
+            console.error("Delete error:", error);
           }
         }}
         onCancel={() => {
@@ -68,6 +66,7 @@ export default function ApplicationsPage() {
         }}
       />
     ));
+    console.log(toastId);
   };
 
   const filteredApplications = applications.filter((app) => {

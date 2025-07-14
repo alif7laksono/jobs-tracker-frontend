@@ -40,18 +40,6 @@ export async function createApplication(
   return res.json();
 }
 
-export async function deleteApplication(id: string) {
-  const res = await fetch(`/api/applications/${id}/soft-delete`, {
-    method: "PATCH",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to move application to trash");
-  }
-
-  return res.json();
-}
-
 export async function updateApplication(id: string, data: unknown) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
@@ -114,6 +102,22 @@ export async function restoreApplication(id: string): Promise<void> {
   }
 }
 
+export async function deleteApplication(id: string) {
+  const res = await fetch(`${BASE_URL}/applications/${id}`, {  // Note the full path
+    method: "DELETE",  // Changed from PATCH to DELETE
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to move application to trash");
+  }
+
+  return res.json();
+}
+
+// For permanent delete from trash
 export async function permanentlyDeleteApplication(id: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/trash/${id}`, {
     method: "DELETE",
