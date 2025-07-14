@@ -1,3 +1,5 @@
+// app/applications/components/ApplicationsList.tsx
+
 "use client";
 
 import { FC, useState } from "react";

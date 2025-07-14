@@ -84,17 +84,15 @@ export async function getApplicationById(id: string) {
   return res.json();
 }
 
-export async function fetchDeletedApplications(): Promise<Application[]> {
-  const res = await fetch(
-    "https://jobs-tracker-backend.vercel.app/api/applications/deleted",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // Jika butuh token, tambahkan Authorization: `Bearer ${token}`
-    }
-  );
+export async function fetchDeletedApplications(
+  userEmail: string
+): Promise<Application[]> {
+  const res = await fetch(`${BASE_URL}/trash?userEmail=${userEmail}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch deleted applications");
@@ -103,16 +101,26 @@ export async function fetchDeletedApplications(): Promise<Application[]> {
   return res.json();
 }
 
+export async function restoreApplication(id: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/trash/restore/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to restore application");
+  }
+}
+
 export async function permanentlyDeleteApplication(id: string): Promise<void> {
-  const res = await fetch(
-    `https://jobs-tracker-backend.vercel.app/api/applications/${id}/permanent`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await fetch(`${BASE_URL}/trash/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to permanently delete application");
