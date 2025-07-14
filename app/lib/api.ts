@@ -103,8 +103,8 @@ export async function restoreApplication(id: string): Promise<void> {
 }
 
 export async function deleteApplication(id: string) {
-  const res = await fetch(`${BASE_URL}/applications/${id}`, {  // Note the full path
-    method: "DELETE",  // Changed from PATCH to DELETE
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "DELETE", 
     headers: {
       "Content-Type": "application/json",
     },
