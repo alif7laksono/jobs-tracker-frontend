@@ -6,14 +6,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Application } from "@/app/types";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
-import { fetchApplications, deleteApplication } from "@/app/lib/api";
-import { useSession } from "next-auth/react";
 import Header from "./components/Header";
 import Filters from "./components/Filters";
 import ApplicationList from "./components/ApplicationsList";
 import CountdownToast from "./components/CountdownToast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { fetchApplications, deleteApplication } from "@/app/lib/api";
+import { useSession } from "next-auth/react";
 
 export default function ApplicationsPage() {
   const router = useRouter();
